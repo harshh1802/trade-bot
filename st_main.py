@@ -4,6 +4,7 @@ from datetime import datetime
 import pandas as pd
 import yfinance as yf
 from bq_util import get_trades, update_stop_loss_by_key
+from kite_helper import find_strike_banknifty, find_strike_nifty
 
 
 def calculate_sl(instrument, ltp):
@@ -41,6 +42,16 @@ def atm_nifty():
     rounded_price = round(spot_price / 50) * 50
     
     return spot_price, rounded_price
+
+def atm_banknifty():
+    ticker = "^NSEBANK"  # Ticker symbol for Bank Nifty
+    
+    data = yf.download(ticker, period="1d")
+    spot_price = data["Close"].iloc[-1]  # Get the most recent closing price
+    
+    rounded_price = round(spot_price / 100) * 100
+    
+    return rounded_price
 
 # Function to fetch unique times from the database
 def fetch_unique_times():
@@ -147,6 +158,46 @@ with tab2:
     if entry:
 
         st.write(f'SL : {entry*1.43}')
+
+    st.divider()
+
+    nifty_trade_ce = st.button('Nifty CE Additional Trade')
+    nifty_trade_pe = st.button('Nifty PE Additional Trade')
+    banknifty_trade_ce = st.button('Banknifty CE Additional Trade')
+    banknifty_trade_pe = st.button('Banknifty PE Additional Trade')
+
+    if nifty_trade_ce:
+        _,nifty_atm = atm_nifty()
+        near_strike = find_strike_nifty('CE',nifty_atm)
+        if near_strike != None:
+            st.write(f"{near_strike['name']} - {int(near_strike['strike'])} - {near_strike['instrument_type']}")
+        else:
+            st.write('No Nearby Strike in given range')
+
+
+    if nifty_trade_pe:
+        _,nifty_atm = atm_nifty()
+        near_strike = find_strike_nifty('PE',nifty_atm)
+        if near_strike != None:
+            st.write(f"{near_strike['name']} - {int(near_strike['strike'])} - {near_strike['instrument_type']}")
+        else:
+            st.write('No Nearby Strike in given range')
+
+    if banknifty_trade_ce:
+        banknifty_atm = atm_banknifty()
+        near_strike = find_strike_banknifty('CE',banknifty_atm)
+        if near_strike != None:
+            st.write(f"{near_strike['name']} - {int(near_strike['strike'])} - {near_strike['instrument_type']}")
+        else:
+            st.write('No Nearby Strike in given range')
+
+    if banknifty_trade_pe:
+        banknifty_atm = atm_banknifty()
+        near_strike = find_strike_banknifty('PE',banknifty_atm)
+        if near_strike != None:
+            st.write(f"{near_strike['name']} - {int(near_strike['strike'])} - {near_strike['instrument_type']}")
+        else:
+            st.write('No Nearby Strike in given range')
 
 with tab3:
 
