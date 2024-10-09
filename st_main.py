@@ -4,8 +4,9 @@ from datetime import datetime
 import pandas as pd
 import yfinance as yf
 from bq_util import get_trades, update_stop_loss_by_key
-from kite_helper import find_strike_banknifty, find_strike_nifty
+from kite_helper import find_strike_banknifty, find_strike_nifty, check_instrument_file
 
+check_instrument_file()
 
 def calculate_sl(instrument, ltp):
     # Define time zone

@@ -4,6 +4,7 @@ from datetime import datetime
 import time
 import pandas as pd
 from bq_util import get_access_token
+import os
 
 
 #Fetch Access toekn
@@ -25,6 +26,20 @@ def get_instrument_file():
         instrument_df = instrument_df[(instrument_df['name'].isin(['NIFTY','BANKNIFTY'])) & (instrument_df['segment'] == 'NFO-OPT')].sort_values(by = 'expiry').to_csv('instruments.csv')
 
         return 'Saved Instrument File'
+
+def check_instrument_file():
+
+    file_name = 'instruments.csv'
+
+    # Check if the file exists and is up-to-date
+    if not os.path.exists(file_name) or datetime.fromtimestamp(os.path.getmtime(file_name)).date() != datetime.today().date():
+        print("Regenerating the mktcap file...")
+        get_instrument_file()
+    else:
+        print("Mktcap File is up-to-date.")
+
+
+    return None
 
 
 def get_ticker_info(df, symbol, strike , instrument_type):
