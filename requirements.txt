@@ -1,0 +1,14 @@
+pandas
+kiteconnect
+path
+pytz
+pendulum
+gspread
+oauth2client
+yfinance
+google-cloud-bigquery
+google-auth
+google-auth-oauthlib
+google-cloud-core
+google-cloud-storage
+db-dtypes
