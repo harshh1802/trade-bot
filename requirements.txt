@@ -12,3 +12,4 @@ google-auth-oauthlib
 google-cloud-core
 google-cloud-storage
 db-dtypes
+google-cloud-bigquery-storage
