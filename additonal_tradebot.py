@@ -35,7 +35,7 @@ logging.info("Script started.")
 
 
 bot_token = "5298366099:AAHeZkCzOz7W31QZoL9a_Zb4gdG-3uIBIFM"  # megabot
-chat_id = -969261634
+chat_id = -4583759303
 
 # Fetch trade entries from the Deta Base
 def fetch_trade_entries():

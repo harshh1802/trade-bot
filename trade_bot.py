@@ -13,7 +13,7 @@ from bq_util import *
 # 5298366099:AAHeZkCzOz7W31QZoL9a_Zb4gdG-3uIBIFM
 
 bot_token = "5298366099:AAHeZkCzOz7W31QZoL9a_Zb4gdG-3uIBIFM"  # megabot
-chat_id = -969261634
+chat_id = -4583759303
 
 try:
     get_instrument_file()
@@ -24,7 +24,7 @@ except Exception as e:
 
 def is_before_time_limit():
     # Define the time limit
-    time_limit_str = '11:50 AM' #TODO : Before 11:50 AM
+    time_limit_str = '06:20 AM' #06:20 USA == 11:50 IST
     
     # Get the current time
     current_time = datetime.now().time()
