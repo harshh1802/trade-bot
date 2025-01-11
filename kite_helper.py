@@ -152,3 +152,40 @@ def find_strike_banknifty(instrument_type, atm_strike):
 
     return closest_option
 
+
+# ==================== Crudeoil - MCX =========================================
+
+def get_crude_instrument_file():
+    
+        instruments = kite.instruments("MCX")
+
+        instrument_df = pd.DataFrame(instruments)
+        # instrument_df.to_csv('crude_instrument.csv')
+
+        instrument_df = instrument_df[(instrument_df['name'].isin(['CRUDEOIL'])) & (instrument_df['segment'] == 'MCX-FUT')].sort_values(by = 'expiry').to_csv('crude_instruments.csv')
+
+        return 'Saved Crude Instrument File'
+
+
+def get_crude_oil_atm():
+    # Load the instrument file
+    instrument_file = "crude_instruments.csv"
+    instrument_df = pd.read_csv(instrument_file)
+
+    # Filter for the nearest expiry Crude Oil future
+    crude_future = instrument_df.sort_values(by="expiry").iloc[0]  # Assuming expiry is parsed as a date
+    instrument_token = crude_future["instrument_token"]
+
+    # Fetch the LTP (Last Traded Price) for the current Crude Oil future
+    ltp_data = kite.ltp([instrument_token])
+
+    crude_ltp = ltp_data[str(instrument_token)]['last_price']
+
+    # Calculate the ATM strike price
+    atm_strike = round(crude_ltp / 100) * 100  # Assuming 100 is the strike interval
+
+    print(f"Crude Oil LTP: {crude_ltp}")
+    print(f"ATM Strike: {atm_strike}")
+
+    return atm_strike
+
