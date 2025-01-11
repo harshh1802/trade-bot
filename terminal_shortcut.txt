@@ -1,0 +1,19 @@
+In terminal
+1. nano .bashrc 
+add custom function
+
+function tbot() {
+    cd ~/Desktop/trade-bot || return  # Change directory to trade-bot, handle error if directory doesn't $
+    python3 trade_bot.py               # Run the Python script
+}
+
+function abot() {
+    cd ~/Desktop/trade-bot || return  # Change directory to trade-bot, handle error if directory doesn't $
+    python3 additonal_tradebot.py  # Run the Python script
+}
+
+function cbot() {
+    cd ~/Desktop/trade-bot || return  # Change directory to trade-bot, handle error if directory doesn't $
+    python3 crudeoil_bot.py  # Run the Python script
+}
+
