@@ -117,7 +117,7 @@ def process_ticks():
                             logging.warning(f"No nearest strike found for {trade['symbol']}")
                         else:
                             #Nifty lot 25 , bank nifty lot 15
-                            qty = round((trade['qty']/25)/2)*25 if trade['name'] == 'NIFTY' else round((trade['qty']/15)/2)*15
+                            qty = round((trade['qty']/25)/4)*25 if trade['name'] == 'NIFTY' else round((trade['qty']/15)/4)*15
                             send_msg(bot_token, chat_id, f"Additional Trade\n{nearest_option['name']} - {int(nearest_option['strike'])} - {nearest_option['instrument_type']} {qty}")
                             logging.info(f"Additional trade for {trade['symbol']}")
 
