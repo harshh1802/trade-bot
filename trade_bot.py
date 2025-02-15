@@ -4,6 +4,7 @@ import time
 from googlesheet import Sheet
 from tele_bot import send_msg, send_error_msg
 from kite_helper import get_instrument_file, get_ticker_info, get_ltp
+from kite_functions import atm_banknifty, atm_nifty, atm_sensex
 import pandas as pd
 from datetime import datetime
 import pytz
@@ -36,46 +37,46 @@ def is_before_time_limit():
     return current_time < time_limit
 
 
-def atm_nifty():
-    ticker = "^NSEI"  # Ticker symbol for Nifty
+# def atm_nifty():
+#     ticker = "^NSEI"  # Ticker symbol for Nifty
     
-    data = yf.download(ticker, period="1d")
-    spot_price = data["Close"].iloc[-1]  # Get the most recent closing price
+#     data = yf.download(ticker, period="1d")
+#     spot_price = data["Close"].iloc[-1]  # Get the most recent closing price
     
-    rounded_price = round(spot_price / 50) * 50
+#     rounded_price = round(spot_price / 50) * 50
     
-    return rounded_price
+#     return rounded_price
 
-def atm_banknifty():
-    ticker = "^NSEBANK"  # Ticker symbol for Bank Nifty
+# def atm_banknifty():
+#     ticker = "^NSEBANK"  # Ticker symbol for Bank Nifty
     
-    data = yf.download(ticker, period="1d")
-    spot_price = data["Close"].iloc[-1]  # Get the most recent closing price
+#     data = yf.download(ticker, period="1d")
+#     spot_price = data["Close"].iloc[-1]  # Get the most recent closing price
     
-    rounded_price = round(spot_price / 100) * 100
+#     rounded_price = round(spot_price / 100) * 100
     
-    return rounded_price
+#     return rounded_price
 
 
-def atm_finnifty():
-    ticker = "NIFTY_FIN_SERVICE.NS"  # Ticker symbol for Bank Nifty
+# def atm_finnifty():
+#     ticker = "NIFTY_FIN_SERVICE.NS"  # Ticker symbol for Bank Nifty
     
-    data = yf.download(ticker, period="1d")
-    spot_price = data["Close"].iloc[-1]  # Get the most recent closing price
+#     data = yf.download(ticker, period="1d")
+#     spot_price = data["Close"].iloc[-1]  # Get the most recent closing price
     
-    rounded_price = round(spot_price / 100) * 100
+#     rounded_price = round(spot_price / 100) * 100
     
-    return rounded_price
+#     return rounded_price
 
-def atm_sensex():
-    ticker = "^BSESN"  # Ticker symbol for Bank Nifty
+# def atm_sensex():
+#     ticker = "^BSESN"  # Ticker symbol for Bank Nifty
     
-    data = yf.download(ticker, period="1d")
-    spot_price = data["Close"].iloc[-1]  # Get the most recent closing price
+#     data = yf.download(ticker, period="1d")
+#     spot_price = data["Close"].iloc[-1]  # Get the most recent closing price
     
-    rounded_price = round(spot_price / 100) * 100
+#     rounded_price = round(spot_price / 100) * 100
     
-    return rounded_price
+#     return rounded_price
 
 def alert():
     send_msg(bot_token,chat_id,"Peak Margin Logging to be done")
@@ -105,7 +106,7 @@ schedule.every().day.at("09:55:00").do(alert)
 instrument_functions = {
     "nifty": atm_nifty,
     "banknifty": atm_banknifty,
-    "finnifty": atm_finnifty,
+    # "finnifty": atm_finnifty,
     "sensex":atm_sensex
 }
 
@@ -184,6 +185,9 @@ for a in data:
 
     elif aday == "friday": #for Test only
         schedule.every().friday.at(trigger_time).do(send,instrument,qty)
+
+    elif aday == "saturday": #for Test only
+        schedule.every().saturday.at(trigger_time).do(send,instrument,qty)
 
     
 

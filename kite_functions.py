@@ -76,6 +76,11 @@ def atm_banknifty():
     banknifty = kite.ltp('NSE:NIFTY BANK')['NSE:NIFTY BANK']['last_price']
     return int(100 * round(banknifty / 100))
 
+#At The Money of BankNifty
+def atm_sensex():
+    banknifty = kite.ltp('BSE:SENSEX')['BSE:SENSEX']['last_price']
+    return int(100 * round(banknifty / 100))
+
 
 def get_ltp(instruments):
     data = kite.ltp(list(map(lambda x :  f"NSE:{x}",instruments)))
@@ -84,11 +89,11 @@ def get_ltp(instruments):
 if __name__ == "__main__":
 
     while 1:
-        print(atm_nifty())
+        print(atm_sensex())
         time.sleep(0.2)
         # print(get_option_ltp('BANKNIFTY',42500))
 
-        print(get_ltp(['MTARTECH','ITC']))
+        # print(get_ltp(['MTARTECH','ITC']))
 
 
 
