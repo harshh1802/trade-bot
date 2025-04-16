@@ -119,7 +119,7 @@ def send(instrument,qty):
         msg = f'Trade {instrument} {strike} CE PE ({qty})'
         send_msg(bot_token,chat_id,msg)
 
-        if is_before_time_limit():#To check if current trade is intra trade 
+        if (is_before_time_limit()) and (instrument != "sensex"):#To check if current trade is intra trade 
 
             print('getting ce')
             ticker_info_ce = get_ticker_info(df , instrument.upper(), strike, 'CE')
