@@ -24,29 +24,39 @@ tab1, tab2 = st.tabs(["📥 New Entry", "📊 View History"])
 # ------------------------- #
 with tab1:
     pnl_value = st.number_input("Enter PnL Value", step=1.0)
+    
     if st.button("Submit"):
         timestamp = datetime.now(IST).strftime("%Y-%m-%d %H:%M:%S")
-        new_data = pd.DataFrame([[timestamp, pnl_value]], columns=["Timestamp", "PnL"])
+        new_entry = pd.DataFrame([[timestamp, pnl_value]], columns=["Timestamp", "PnL"])
 
-        # Save CSV
+        # Append to CSV
         if os.path.exists(csv_filename):
-            new_data.to_csv(csv_filename, mode='a', header=False, index=False)
+            new_entry.to_csv(csv_filename, mode='a', header=False, index=False)
         else:
-            new_data.to_csv(csv_filename, index=False)
+            new_entry.to_csv(csv_filename, index=False)
 
         st.success("PnL Value Saved!")
 
-    # --- Show Today's Chart ---
+    # Display current CSV after submission
     if os.path.exists(csv_filename):
-        df = pd.read_csv(csv_filename)
-        df["Timestamp"] = pd.to_datetime(df["Timestamp"]).dt.tz_localize("Asia/Kolkata")
+        # Read fresh data (for plotting and editing)
+        df_plot = pd.read_csv(csv_filename)
+        df_edit = df_plot.copy()
 
-        # Key info
-        first_time = df["Timestamp"].iloc[0].strftime("%Y-%m-%d %H:%M:%S")
-        last_time = df["Timestamp"].iloc[-1].strftime("%Y-%m-%d %H:%M:%S")
-        last_pnl = df["PnL"].iloc[-1]
+        # Parse + localize time
+        for df_temp in [df_plot, df_edit]:
+            df_temp["Timestamp"] = pd.to_datetime(df_temp["Timestamp"], errors='coerce')
+            df_temp = df_temp.dropna(subset=["Timestamp"])
+            if df_temp["Timestamp"].dt.tz is None:
+                df_temp["Timestamp"] = df_temp["Timestamp"].dt.tz_localize("Asia/Kolkata")
+            else:
+                df_temp["Timestamp"] = df_temp["Timestamp"].dt.tz_convert("Asia/Kolkata")
 
-        # Display stats
+        # Info & Chart
+        first_time = df_plot["Timestamp"].iloc[0].strftime("%Y-%m-%d %H:%M:%S")
+        last_time = df_plot["Timestamp"].iloc[-1].strftime("%Y-%m-%d %H:%M:%S")
+        last_pnl = df_plot["PnL"].iloc[-1]
+
         st.markdown(
             f"""
             <div style="text-align: center; font-size: 18px; margin: 20px 0;">
@@ -58,19 +68,26 @@ with tab1:
             unsafe_allow_html=True
         )
 
-        # Plot
         st.subheader("📊 PnL Over Time")
-        chart_title = f"PnL Trend | {today_str} | Last PnL: {last_pnl}"
         fig, ax = plt.subplots()
-        ax.plot(df["Timestamp"], df["PnL"], marker='o')
+        ax.plot(df_plot["Timestamp"], df_plot["PnL"], marker='o')
         ax.set_xlabel("Time (IST)")
         ax.set_ylabel("PnL")
-        ax.set_title(chart_title)
+        ax.set_title(f"PnL Trend | {today_str} | Last PnL: {last_pnl}")
         ax.grid(True)
         plt.xticks(rotation=45)
         st.pyplot(fig)
 
-        # Download button
+        # Editable Table
+        st.subheader("✏️ Edit Today's Entries")
+        edited_df = st.data_editor(df_edit, num_rows="dynamic", key="edit_today")
+
+        if st.button("💾 Save Edits"):
+            edited_df["Timestamp"] = pd.to_datetime(edited_df["Timestamp"], errors='coerce')
+            edited_df = edited_df.dropna(subset=["Timestamp"])
+            edited_df.to_csv(csv_filename, index=False)
+            st.success("Changes saved successfully!")
+
         img_bytes = BytesIO()
         fig.savefig(img_bytes, format='png', bbox_inches='tight')
         st.download_button(
